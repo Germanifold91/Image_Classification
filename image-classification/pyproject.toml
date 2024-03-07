@@ -1,0 +1,40 @@
+[build-system]
+requires = [ "setuptools",]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "image_classification"
+readme = "README.md"
+dynamic = [ "dependencies", "version",]
+
+[project.scripts]
+image-classification = "image_classification.__main__:main"
+
+[tool.kedro]
+package_name = "image_classification"
+project_name = "image_classification"
+kedro_init_version = "0.19.3"
+tools = [ "Linting", "Kedro Viz",]
+example_pipeline = "True"
+source_dir = "src"
+
+[tool.ruff]
+line-length = 88
+show-fixes = true
+select = [ "F", "W", "E", "I", "UP", "PL", "T201",]
+ignore = [ "E501",]
+
+[project.entry-points."kedro.hooks"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.setuptools.dynamic.dependencies]
+file = "requirements.txt"
+
+[tool.setuptools.dynamic.version]
+attr = "image_classification.__version__"
+
+[tool.setuptools.packages.find]
+where = [ "src",]
+namespaces = false
