@@ -1,70 +1,35 @@
-from typing import Dict, Tuple
+""" Image folders and paths processing"""
 
 import pandas as pd
+import os
 
 
-def _is_true(x: pd.Series) -> pd.Series:
-    return x == "t"
-
-
-def _parse_percentage(x: pd.Series) -> pd.Series:
-    x = x.str.replace("%", "")
-    x = x.astype(float) / 100
-    return x
-
-
-def _parse_money(x: pd.Series) -> pd.Series:
-    x = x.str.replace("$", "").str.replace(",", "")
-    x = x.astype(float)
-    return x
-
-
-def preprocess_companies(companies: pd.DataFrame) -> Tuple[pd.DataFrame, Dict]:
-    """Preprocesses the data for companies.
-
-    Args:
-        companies: Raw data.
-    Returns:
-        Preprocessed data, with `company_rating` converted to a float and
-        `iata_approved` converted to boolean.
+def image_registry(data_dir: str) -> pd.DataFrame:
+    """ 
     """
-    companies["iata_approved"] = _is_true(companies["iata_approved"])
-    companies["company_rating"] = _parse_percentage(companies["company_rating"])
-    return companies, {"columns": companies.columns.tolist(), "data_type": "companies"}
+    file_paths = []
+    labels = []
 
+    # Assuming top-level folders are categories containing images directly
+    categories = [d for d in os.listdir(data_dir) if os.path.isdir(os.path.join(data_dir, d))]
+    print(f"Categories found: {categories}")  # Debug print
 
-def preprocess_shuttles(shuttles: pd.DataFrame) -> pd.DataFrame:
-    """Preprocesses the data for shuttles.
+    for category in categories:
+        category_path = os.path.join(data_dir, category)
+        image_files = [f for f in os.listdir(category_path) if not f.startswith('.')]  # Skip hidden files like .DS_Store
+        
+        for image_file in image_files:
+            image_path = os.path.join(category_path, image_file)
+            if os.path.isfile(image_path):  # Ensure it's a file, not a directory
+                file_paths.append(image_path)
+                labels.append(category)
 
-    Args:
-        shuttles: Raw data.
-    Returns:
-        Preprocessed data, with `price` converted to a float and `d_check_complete`,
-        `moon_clearance_complete` converted to boolean.
-    """
-    shuttles["d_check_complete"] = _is_true(shuttles["d_check_complete"])
-    shuttles["moon_clearance_complete"] = _is_true(shuttles["moon_clearance_complete"])
-    shuttles["price"] = _parse_money(shuttles["price"])
-    return shuttles
+    if not file_paths:  # Check if file_paths list is empty
+        print("No files were added to the list. Please check the directory structure and naming.")
 
+    fseries = pd.Series(file_paths, name='file_paths')
+    lseries = pd.Series(labels, name='labels')
 
-def create_model_input_table(
-    shuttles: pd.DataFrame, companies: pd.DataFrame, reviews: pd.DataFrame
-) -> pd.DataFrame:
-    """Combines all data to create a model input table.
-
-    Args:
-        shuttles: Preprocessed data for shuttles.
-        companies: Preprocessed data for companies.
-        reviews: Raw data for reviews.
-    Returns:
-        Model input table.
-
-    """
-    rated_shuttles = shuttles.merge(reviews, left_on="id", right_on="shuttle_id")
-    rated_shuttles = rated_shuttles.drop("id", axis=1)
-    model_input_table = rated_shuttles.merge(
-        companies, left_on="company_id", right_on="id"
-    )
-    model_input_table = model_input_table.dropna()
-    return model_input_table
+    image_meta = pd.concat([fseries, lseries], axis=1)
+    
+    return image_meta 
