@@ -1,28 +1,16 @@
 from kedro.pipeline import Pipeline, node, pipeline
 
-from .nodes import create_model_input_table, preprocess_companies, preprocess_shuttles
+from .nodes import image_registry
 
 
 def create_pipeline(**kwargs) -> Pipeline:
     return pipeline(
         [
             node(
-                func=preprocess_companies,
-                inputs="companies",
-                outputs=["preprocessed_companies", "companies_columns"],
-                name="preprocess_companies_node",
-            ),
-            node(
-                func=preprocess_shuttles,
-                inputs="shuttles",
-                outputs="preprocessed_shuttles",
-                name="preprocess_shuttles_node",
-            ),
-            node(
-                func=create_model_input_table,
-                inputs=["preprocessed_shuttles", "preprocessed_companies", "reviews"],
-                outputs="model_input_table",
-                name="create_model_input_table_node",
+                func=image_registry,
+                inputs="params:path_directory_images",
+                outputs="images_metadata@pd",
+                name="image_metadata_extraction",
             ),
         ]
     )

@@ -31,5 +31,7 @@ def image_registry(data_dir: str) -> pd.DataFrame:
     lseries = pd.Series(labels, name='labels')
 
     image_meta = pd.concat([fseries, lseries], axis=1)
+
+    print(f"Dataframe generated: {image_meta.shape[0]} images processed")
     
     return image_meta 
