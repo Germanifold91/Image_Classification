@@ -1,1 +1,8 @@
+# Path to directory where images are located
 path_directory_images: /Users/germanifold/Desktop/Germanifold/Python_Projects/Image_Classification/image-classification/data/01_raw/cell_images
+
+# Parameters for splitting of training and validation dataframe
+split_params:
+  random_state: 42
+  test_size_training: 0.2
+  test_size_validation: 0.5

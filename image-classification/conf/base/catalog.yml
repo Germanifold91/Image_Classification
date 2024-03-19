@@ -43,3 +43,26 @@ images_metadata@pd:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/images_metadata.csv
 
+X_train:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/x_train.csv
+  save_args:
+    sep: ';'
+
+y_train:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/y_train.csv
+  save_args:
+    sep: ';'
+
+X_test:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/x_test.csv
+  save_args:
+    sep: ';'
+
+y_test:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/y_test.csv
+  save_args:
+    sep: ';'
