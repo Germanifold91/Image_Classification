@@ -47,22 +47,31 @@ X_train:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/x_train.csv
   save_args:
-    sep: ';'
+    sep: ','
 
 y_train:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/y_train.csv
   save_args:
-    sep: ';'
+    sep: ','
 
 X_test:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/x_test.csv
   save_args:
-    sep: ';'
+    sep: ','
 
 y_test:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/y_test.csv
   save_args:
-    sep: ';'
+    sep: ','
+
+# TRAINING
+tf_model:
+  type: tensorflow.TensorFlowModelDataset
+  filepath: data/06_models/tf_model
+
+train_acc:
+  type: kedro_mlflow.io.metrics.MlflowMetricDataset
+  key: training_accuracy
