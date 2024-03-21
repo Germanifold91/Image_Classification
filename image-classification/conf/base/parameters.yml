@@ -6,3 +6,12 @@ split_params:
   random_state: 42
   test_size_training: 0.2
   test_size_validation: 0.5
+
+nn_training_params:
+  batch_size: 64
+  image_size: 224
+  channels: 3
+  learning_rate: 0.01
+  training_metric: accuracy
+  activation_function: relu
+  epochs: 3

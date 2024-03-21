@@ -67,11 +67,31 @@ y_test:
   save_args:
     sep: ','
 
-# TRAINING
+# ------------------------------------------------------------------Trained Models-----------------------------------------------------------------------
 tf_model:
   type: tensorflow.TensorFlowModelDataset
   filepath: data/06_models/tf_model
 
+# ---------------------------------------------------------------Evolution of metrics--------------------------------------------------------------------
 train_acc:
-  type: kedro_mlflow.io.metrics.MlflowMetricDataset
-  key: training_accuracy
+    type: kedro_mlflow.io.metrics.MlflowMetricHistoryDataset
+    key: training_accuracy 
+
+train_loss:
+    type: kedro_mlflow.io.metrics.MlflowMetricHistoryDataset
+    key: training_loss
+
+val_acc:
+    type: kedro_mlflow.io.metrics.MlflowMetricHistoryDataset
+    key: validation_accuracy 
+
+val_loss:
+    type: kedro_mlflow.io.metrics.MlflowMetricHistoryDataset
+    key: validation_loss 
+
+# ----------------------------------------------------------------------Artifacts-------------------------------------------------------------------------
+training_evaluation_metrics:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
+  dataset:
+    type: matplotlib.MatplotlibWriter
+    filepath: data/07_model_output/acc_loss_evolution.png
