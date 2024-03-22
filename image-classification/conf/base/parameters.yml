@@ -11,7 +11,7 @@ nn_training_params:
   batch_size: 64
   image_size: 224
   channels: 3
-  learning_rate: 0.01
+  learning_rate: 0.001
   training_metric: accuracy
   activation_function: relu
-  epochs: 3
+  epochs: 4

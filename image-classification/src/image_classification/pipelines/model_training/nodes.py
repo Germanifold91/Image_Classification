@@ -1,17 +1,22 @@
-from sklearn.model_selection import train_test_split
 from typing import Dict, Tuple, Any, List
 from matplotlib.figure import Figure
+from itertools import cycle
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import itertools
 
-import tensorflow as tf
-from tensorflow import keras
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers import Adam, Adamax
+from tensorflow.keras.optimizers import Adamax
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Activation, Dropout, BatchNormalization
-from tensorflow.keras import regularizers
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from keras.preprocessing.image import DataFrameIterator
+from tensorflow.keras.models import Model
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.preprocessing import LabelBinarizer
 
 
 def evolution_train_plot(tr_acc: List[float],
@@ -58,6 +63,53 @@ def evolution_train_plot(tr_acc: List[float],
 
     return fig
 
+def plot_cm(test_gen: DataFrameIterator,
+            preds: np.ndarray,) -> Figure:
+    """
+    Evaluates the given model on the test dataset and plots the confusion matrix.
+
+    Parameters:
+    - test_df: DataFrame containing the test data file paths and labels.
+    - trained_model: The trained Keras Model to evaluate.
+    - params: A dictionary containing parameters for the evaluation, including
+      'batch_size' and 'image_size'.
+
+    Returns:
+    - A Matplotlib figure object containing the confusion matrix plot.
+    """
+
+    y_pred = np.argmax(preds, axis=1)
+    g_dict = test_gen.class_indices
+    classes = list(g_dict.keys())
+
+    # Generate confusion matrix
+    cm = confusion_matrix(test_gen.classes, y_pred)
+
+    # Create figure for plotting
+    fig, ax = plt.subplots(figsize=(10, 10))
+    cax = ax.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+    fig.colorbar(cax)
+
+    tick_marks = np.arange(len(classes))
+    ax.set_xticks(tick_marks)
+    ax.set_xticklabels(classes, rotation=45)
+    ax.set_yticks(tick_marks)
+    ax.set_yticklabels(classes)
+
+    # Annotate the confusion matrix
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        ax.text(j, i, cm[i, j], horizontalalignment='center', 
+                color='white' if cm[i, j] > thresh else 'black', fontsize = 21)
+
+    ax.set_ylabel('True Label')
+    ax.set_xlabel('Predicted Label')
+    ax.set_title('Confusion Matrix')
+
+    plt.tight_layout()
+
+    return fig
+
 
 def split_data(images_metadata: pd.DataFrame, split_params: Dict) -> Tuple:
     """Splits data into features and targets training and test sets.
@@ -80,7 +132,87 @@ def split_data(images_metadata: pd.DataFrame, split_params: Dict) -> Tuple:
         )
     return X_train, X_test, y_train, y_test
 
+def plot_roc(test_gen: DataFrameIterator, 
+             preds: np.ndarray) -> Figure:
+    """
+    Generates and plots ROC curve(s) for the given model and test data.
+    
+    Parameters:
+    - test_df: DataFrame containing the test dataset with columns 'file_paths' and 'labels'.
+    - trained_model: Trained TensorFlow/Keras model to evaluate.
+    - params: Dictionary containing 'batch_size' and 'image_size' parameters.
+    
+    Returns:
+    - fig: Matplotlib figure object containing the ROC curve plot.
+    """
+    
+    # Get class labels from the generator
+    g_dict = test_gen.class_indices
+    classes = list(g_dict.keys())  # Actual class labels
+    
+    # Prepare true labels for ROC analysis
+    lb = LabelBinarizer()
+    y_true = lb.fit_transform(test_gen.classes)
+    if y_true.shape[1] == 1:  # Binary classification edge-case
+        y_true = np.hstack((1-y_true, y_true))
+    
+    n_classes = y_true.shape[1]
+    
+    # Compute ROC curve and ROC area for each class
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+    for i in range(n_classes):
+        fpr[i], tpr[i], _ = roc_curve(y_true[:, i], preds[:, i])
+        roc_auc[i] = auc(fpr[i], tpr[i])
+    
+    # Plot all ROC curves
+    fig, ax = plt.subplots(figsize=(10, 8))
+    colors = cycle(['aqua', 'darkorange', 'cornflowerblue'])
+    for i, color in zip(range(n_classes), colors):
+        # Use class labels in legend
+        label = f'ROC curve of {classes[i]} (area = {roc_auc[i]:.2f})'
+        ax.plot(fpr[i], tpr[i], color=color, lw=2, label=label)
+    
+    ax.plot([0, 1], [0, 1], 'k--', lw=2)
+    ax.set_xlim([0.0, 1.0])
+    ax.set_ylim([0.0, 1.05])
+    ax.set_xlabel('False Positive Rate')
+    ax.set_ylabel('True Positive Rate')
+    ax.set_title('Receiver Operating Characteristic (ROC) Curves')
+    ax.legend(loc="lower right")
+    plt.tight_layout()
+    
+    return fig
 
+def evaluation_plots(test_df: pd.DataFrame,
+                     trained_model: Model,
+                     params: Dict[str, Any]) -> Figure:
+    """ 
+    """
+    
+    # Unpacking parameters
+    batch_size = params['batch_size']
+    img_size = (params['image_size'], params['image_size'])
+    
+    # Initialize test data generator
+    gen = ImageDataGenerator()
+    test_gen = gen.flow_from_dataframe(test_df, 
+                                       x_col='file_paths', 
+                                       y_col='labels',
+                                       target_size=img_size, 
+                                       class_mode='categorical', 
+                                       color_mode='rgb', 
+                                       shuffle=False, 
+                                       batch_size=batch_size)
+    
+    # Generate predictions
+    predictions = trained_model.predict(test_gen, steps=np.ceil(len(test_df) / batch_size))
+    
+    cm_plot = plot_cm(test_gen=test_gen, preds=predictions)
+    roc_plot = plot_roc(test_gen=test_gen, preds=predictions)
+
+    return cm_plot, roc_plot
 
 def create_architecture(train_df: pd.DataFrame,
                         valid_df: pd.DataFrame,

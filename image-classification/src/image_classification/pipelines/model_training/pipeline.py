@@ -1,12 +1,15 @@
 from kedro.pipeline import Pipeline, node
-from .nodes import split_data, create_architecture
+from .nodes import split_data, create_architecture, evaluation_plots
 
 def create_pipeline(**kwargs) -> Pipeline:
     return Pipeline(
         [
             node(
                 func=split_data,
-                inputs=["images_metadata@pd", "params:split_params"],
+                inputs=[
+                    "images_metadata@pd", 
+                    "params:split_params"
+                    ],
                 outputs=[
                     "X_train", 
                     "X_test", 
@@ -17,7 +20,12 @@ def create_pipeline(**kwargs) -> Pipeline:
             ),
             node(
                 func=create_architecture,
-                inputs=["X_train", "X_test", "y_test", "params:nn_training_params"],
+                inputs=[
+                    "X_train", 
+                    "X_test", 
+                    "y_test", 
+                    "params:nn_training_params"
+                    ],
                 outputs=[
                     "tf_model", 
                     "train_acc", 
@@ -27,6 +35,19 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "training_evaluation_metrics"
                     ],
                 name="model_training_node",
+            ),
+            node(
+                func=evaluation_plots,
+                inputs=[
+                    "y_test", 
+                    "tf_model", 
+                    "params:nn_training_params"
+                    ],
+                outputs=[
+                    "cm_plot",
+                    "roc_plot"
+                    ],
+                name="model_evaluation_plots",
             ),
         ]
     )

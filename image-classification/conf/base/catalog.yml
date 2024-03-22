@@ -95,3 +95,15 @@ training_evaluation_metrics:
   dataset:
     type: matplotlib.MatplotlibWriter
     filepath: data/07_model_output/acc_loss_evolution.png
+
+cm_plot:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
+  dataset:
+    type: matplotlib.MatplotlibWriter
+    filepath: data/07_model_output/confusion_matrix.png
+
+roc_plot:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
+  dataset:
+    type: matplotlib.MatplotlibWriter
+    filepath: data/07_model_output/roc_plot.png
