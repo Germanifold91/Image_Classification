@@ -5,10 +5,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import itertools
+import os
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adamax
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 from keras.preprocessing.image import DataFrameIterator
 from tensorflow.keras.models import Model
