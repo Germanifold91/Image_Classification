@@ -1,11 +1,25 @@
-""" Image folders and paths processing"""
+"""Image folders and paths processing"""
 
 import pandas as pd
 import os
 
 
 def image_registry(data_dir: str) -> pd.DataFrame:
-    """ 
+    """
+    Creates a DataFrame of image file paths and labels from a structured directory.
+
+    Each subdirectory within `data_dir` represents a label and contains images for that label.
+    The resulting DataFrame has 'file_paths' and 'labels' columns for image paths and their labels, respectively.
+
+    Parameters:
+    - data_dir (str): Path to the directory containing labeled subdirectories of images.
+
+    Returns:
+    - pd.DataFrame: A DataFrame with 'file_paths' and 'labels' columns.
+
+    Note:
+    - Skips hidden files and prints a summary of the processed images.
+    - Prints a warning if no image files are found.
     """
     file_paths = []
     labels = []

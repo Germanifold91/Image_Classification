@@ -1,3 +1,5 @@
+"""Model training, evaluation and inference pipeline"""
+
 from kedro.pipeline import Pipeline, node
 from .training import split_data, create_architecture, evaluation_plots
 from .predictions import predict_single_image

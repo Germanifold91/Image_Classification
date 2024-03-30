@@ -1,3 +1,5 @@
+"""Training and evaluation functions"""
+
 from typing import Dict, Tuple, Any, List
 from matplotlib.figure import Figure
 from itertools import cycle
@@ -25,6 +27,23 @@ def evolution_train_plot(tr_acc: List[float],
                          val_acc: List[float],
                          val_loss: List[float]
                          ) -> Figure:
+    
+    """
+    Generates a plot displaying training and validation loss, as well as accuracy over epochs.
+
+    This function creates a two-panel figure: one panel shows the training and validation loss over
+    each epoch, highlighting the epoch with the lowest validation loss. The other panel displays
+    the training and validation accuracy, highlighting the epoch with the highest validation accuracy.
+
+    Parameters:
+    - tr_acc (List[float]): List of training accuracy values per epoch.
+    - tr_loss (List[float]): List of training loss values per epoch.
+    - val_acc (List[float]): List of validation accuracy values per epoch.
+    - val_loss (List[float]): List of validation loss values per epoch.
+
+    Returns:
+    - Figure: A matplotlib figure containing the plotted training history.
+    """
     
     # Assuming tr_acc, tr_loss, val_acc, and val_loss are passed directly to the function
     # No need to redefine them here as they're function parameters now
@@ -189,7 +208,16 @@ def plot_roc(test_gen: DataFrameIterator,
 def evaluation_plots(test_df: pd.DataFrame,
                      trained_model: Model,
                      params: Dict[str, Any]) -> Figure:
-    """ 
+    """
+    Generates a confusion matrix and ROC curves for a model's predictions on test data.
+    
+    Parameters:
+    - test_df: DataFrame with 'file_paths' to images and their 'labels'.
+    - trained_model: Pre-trained Keras model.
+    - params: {'batch_size': int, 'image_size': (int, int)}.
+    
+    Returns:
+    - A tuple of matplotlib Figures for the confusion matrix and ROC curves.
     """
     
     # Unpacking parameters
@@ -219,7 +247,20 @@ def create_architecture(train_df: pd.DataFrame,
                         valid_df: pd.DataFrame,
                         test_df: pd.DataFrame,
                         params: Dict) -> Tuple:
-    """ 
+    """
+    Builds, trains, and evaluates a convolutional neural network (CNN) model using the provided dataframes 
+    and parameters, and generates a plot of the training evolution.
+
+    Parameters:
+    - train_df: Training data DataFrame with 'file_paths' and 'labels'.
+    - valid_df: Validation data DataFrame similar to train_df.
+    - test_df: Test data DataFrame similar to train_df.
+    - params: Dictionary of model and training parameters (batch_size, image_size, channels, learning_rate, 
+      training_metric, activation_function, epochs).
+
+    Returns:
+    - Tuple containing the trained model, training accuracy, training loss, validation accuracy, 
+      validation loss, and the training evolution plot as a matplotlib figure.
     """
 
     train_df.columns

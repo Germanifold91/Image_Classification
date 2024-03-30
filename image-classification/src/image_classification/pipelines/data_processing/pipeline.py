@@ -1,9 +1,10 @@
+"""Data Processing pipeline"""
+
 from kedro.pipeline import Pipeline, node, pipeline
+from .processing import image_registry
 
-from .nodes import image_registry
 
-
-def create_pipeline(**kwargs) -> Pipeline:
+def data_processing(**kwargs) -> Pipeline:
     return pipeline(
         [
             node(
@@ -11,6 +12,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 inputs="params:path_directory_images",
                 outputs="images_metadata@pd",
                 name="image_metadata_extraction",
+                tags = ["data_engineering"]
             ),
         ]
     )

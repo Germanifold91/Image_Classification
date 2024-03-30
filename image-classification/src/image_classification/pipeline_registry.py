@@ -14,10 +14,23 @@ from .pipelines.model_training import training_pipeline as model_training_pipeli
 
 
 def register_pipelines() -> Dict[str, Pipeline]:
-    """Register the project's pipelines.
+    """
+    Initializes and registers the project's pipelines for data processing, machine learning training,
+    and inference, including a combined default pipeline.
+
+    This function creates separate pipelines for data engineering (data_processing), machine learning
+    model training (training), and inference, then combines these into a comprehensive machine learning
+    pipeline (training_pipeline_ml) with specified training and inference components. The default pipeline
+    aggregates all these individual pipelines for ease of use.
+
+    The `training_pipeline_ml` is further customized with MLflow logging configurations.
 
     Returns:
-        A mapping from a pipeline name to a ``Pipeline`` object.
+    - A dictionary mapping pipeline names to their respective `Pipeline` objects, including:
+      - 'data_processing': The data engineering pipeline.
+      - 'training': The ML training pipeline enhanced with MLflow logging.
+      - 'inference': The inference pipeline.
+      - '__default__': A combination of all pipelines for comprehensive execution.
     """
 
     data_processing = data_engineering_pipeline()
@@ -38,8 +51,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
             signature="auto",
         ),
     )
-
-
+    
     return {
         "data_processing": data_processing,
         "training": training_pipeline_ml,
