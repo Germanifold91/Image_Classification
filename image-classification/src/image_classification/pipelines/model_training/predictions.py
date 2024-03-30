@@ -7,7 +7,8 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.models import Model
 
 
-def predict_single_image(trained_model: Model, params: Dict[str, Any]) -> pd.DataFrame:
+def predict_single_image(trained_model: Model, 
+                         params: Dict[str, Any]) -> pd.DataFrame:
     """
     Predicts the class of a single image using the trained model and returns the results in a DataFrame,
     after verifying the image path exists.

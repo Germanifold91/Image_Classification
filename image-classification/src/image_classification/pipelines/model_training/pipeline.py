@@ -1,7 +1,8 @@
 from kedro.pipeline import Pipeline, node
-from .nodes import split_data, create_architecture, evaluation_plots
+from .training import split_data, create_architecture, evaluation_plots
+from .predictions import predict_single_image
 
-def create_pipeline(**kwargs) -> Pipeline:
+def training_pipeline(**kwargs) -> Pipeline:
     return Pipeline(
         [
             node(
@@ -17,6 +18,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "y_test"
                     ],
                 name="split_image_metadata",
+                tags=["training", "split"],
             ),
             node(
                 func=create_architecture,
@@ -35,6 +37,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "training_evaluation_metrics"
                     ],
                 name="model_training_node",
+                tags=["training"],
             ),
             node(
                 func=evaluation_plots,
@@ -48,6 +51,17 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "roc_plot"
                     ],
                 name="model_evaluation_plots",
+                tags=["training", "evaluation"],
+            ),
+            node(
+                func=predict_single_image,
+                inputs=[
+                    "tf_model", 
+                    "params:prediction_params"
+                    ],
+                outputs="model_predictions",
+                name="predict_image",
+                tags=["inference"],
             ),
         ]
     )
