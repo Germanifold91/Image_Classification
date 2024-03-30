@@ -42,6 +42,8 @@
 images_metadata@pd:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/images_metadata.csv
+  save_args:
+    sep: ','
 
 X_train:
   type: pandas.CSVDataset
@@ -94,16 +96,23 @@ training_evaluation_metrics:
   type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
   dataset:
     type: matplotlib.MatplotlibWriter
-    filepath: data/07_model_output/acc_loss_evolution.png
+    filepath: data/07_model_output/training_metrics/acc_loss_evolution.png
 
 cm_plot:
   type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
   dataset:
     type: matplotlib.MatplotlibWriter
-    filepath: data/07_model_output/confusion_matrix.png
+    filepath: data/07_model_output/cm/confusion_matrix.png
 
 roc_plot:
   type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
   dataset:
     type: matplotlib.MatplotlibWriter
-    filepath: data/07_model_output/roc_plot.png
+    filepath: data/07_model_output/roc/roc_plot.png
+
+# ---------------------------------------------------------------------Model Predictions-----------------------------------------------------------------
+model_predictions:
+  type: pandas.CSVDataset
+  filepath: "data/07_model_output/model_prediction.csv"
+  save_args:
+    sep: ','

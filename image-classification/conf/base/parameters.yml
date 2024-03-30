@@ -14,4 +14,10 @@ nn_training_params:
   learning_rate: 0.001
   training_metric: accuracy
   activation_function: relu
-  epochs: 4
+  epochs: 15
+
+# Parameters for image prediction
+prediction_params:
+  image_path: /Users/germanifold/Desktop/Germanifold/Python_Projects/Image_Classification/image-classification/data/01_raw/cell_images/Uninfected/C1_thinF_IMG_20150604_104722_cell_9.png
+  image_size: 224
+  normalize: False
