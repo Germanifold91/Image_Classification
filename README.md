@@ -224,3 +224,7 @@ kedro run --pipeline training
 ```
 kedro mlflow ui
 ```
+<img width="1724" alt="Screenshot 2024-04-01 at 8 32 32 PM" src="https://github.com/Germanifold91/Image_Classification/assets/102771524/ef3547bc-cc65-424a-bc79-7bcda9b901e6">
+
+# Notes
+Please feel free to contact me if you have any questions and or suggestions concerning this repository. I would be more than happy to clarify any aspects as clearly as possible and make this a prime example of the previous integration. While this document/project was never intended to provide an extensive explanation on the topic, it is meant to offer a practical example of how MLflow can be used into Kedro fairly easily.
