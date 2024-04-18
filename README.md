@@ -1,4 +1,4 @@
-# Image Classification
+# Image Classification 🦟
 
 # 1. Overview 
 The following repository is aimed at demonstrating the integration of [MLflow](https://mlflow.org/docs/latest/index.html) into [Kedro](https://kedro.readthedocs.io) through the use of its plugin, [kedro-mlflow](https://kedro-mlflow.readthedocs.io/en/stable/index.html). This project is NOT intended to serve as a reference for constructing efficient or accurate neural networks. There are numerous resources available that are better suited for that purpose than this repository. However, if you are familiar with either of these two technologies and are looking to learn about the other in the context of what you already know, then this repository will provide a straightforward example to broaden your knowledge.
@@ -10,7 +10,7 @@ On the other hand, what this repository WILL DO (or at least, this is the intent
 
 
 
-# 2. Why Kedro MLflow
+# 2. Why Kedro MLflow 
 In the journey from data to deployment in machine learning projects, two main challenges stand out: managing complex data workflows and ensuring the reproducibility of results. As projects scale from experimental stages to production-ready solutions, the need for a structured, efficient approach becomes critical. **Kedro MLflow** addresses these challenges by marrying Kedro’s streamlined data pipeline architecture with MLflow’s comprehensive experiment tracking and model management.
 
 ## Simplifying Data Workflows with Kedro
@@ -43,7 +43,7 @@ cd Image_Classification
 pip install -r requirements.txt
 ```
 
-# 4. Pipelines Structures
+# 4. Pipelines Structures 
 The execution of this project is divided into two main pipelines:
 
 ### Data Processing
